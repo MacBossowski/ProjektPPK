@@ -116,52 +116,42 @@ graf Dekoder(vSt Plik_Tekstowy, mStDb& Q, mStDbSt& P) {
 
 void Djikstra(mStDb& Q, mStDb& S, mStDbSt& P, graf& Polaczenia) {
     double Min;
-    vSt Wyj;
+    string Najkrotsze;
 
     while (Q.size() > 0)
     {
         Min = numeric_limits<double>::max();
-
         for (auto a : Q)
         {
             if (a.second < Min)
             {
                 Min = a.second;
-                Wyj.clear();
-                Wyj.push_back(a.first);
+                Najkrotsze.clear();
+                Najkrotsze = a.first;
             }
-            else if (a.second == Min)
+            else if (a.second == Min && S[Najkrotsze] == 1)
             {
-                Wyj.push_back(a.first);
+                Najkrotsze = a.first;
             }
-
         }
 
-        S[Wyj[0]] = 1;
-        Q.erase(Wyj[0]);
+        S[Najkrotsze] = 1;
+        Q.erase(Najkrotsze);
 
-        for (string b : Wyj)
-        {
-            for (auto c : Polaczenia[b])
+            for (auto c : Polaczenia[Najkrotsze])
             {
-                if (S[c.first] == 1)
+                if (S[c.first] == 1) //Eliminacja zapętleń, przejście do następnego elementu zapisanego w string Najkrotsze
                 {
                     continue;
                 };
-                if (P[c.first].first > P[Wyj[0]].first + c.second)
+                if (P[c.first].first > P[Najkrotsze].first + c.second)
                 {
                     Q[c.first] = c.second;
-                    P[c.first].first = P[Wyj[0]].first + c.second;
-                    P[c.first].second = Wyj[0];
+                    P[c.first].first = P[Najkrotsze].first + c.second;
+                    P[c.first].second = Najkrotsze;
                 };
-
             }
-
-        }
-
-
-        Wyj.clear();
-
+            Najkrotsze.clear();
     }
     Polaczenia.clear();
     S.clear();
